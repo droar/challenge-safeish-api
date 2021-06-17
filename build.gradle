@@ -1,0 +1,88 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.5.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'io.freefair.lombok' version '5.3.0'
+}
+
+group 'com.getwith'
+version '0.0.1'
+description = 'safeIsh'
+
+sourceCompatibility = '15'
+targetCompatibility = '15'
+
+ext {
+    lombokVersion = "1.18.20"
+    h2Version = "1.4.200"
+    passayVersion = "1.6.0"
+    jsonVersion = "20210307"
+    lang3Version = "3.12.0"
+    collections4Version = "4.4"
+    cipherVersion = "1.69"
+    tinkVersion = "1.5.0"
+    jwtVersion = "0.9.1"
+}
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	
+	// workaround to publish an spring boot application
+	[apiElements, runtimeElements].each {
+		it.outgoing.artifacts.removeIf {
+			it.buildDependencies.getDependencies(null).contains(jar)
+		}
+		it.outgoing.artifact(bootJar)
+	}
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	//Spring dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.hibernate:hibernate-core'
+
+	// Custom dependencies
+	implementation "org.projectlombok:lombok:${lombokVersion}"
+	implementation "com.h2database:h2:${h2Version}"
+	implementation "org.passay:passay:${passayVersion}"
+	implementation "org.json:json:${jsonVersion}"
+	
+	// Jwt for version 1.0 auth
+	implementation "io.jsonwebtoken:jjwt:${jwtVersion}"
+	
+	// Commons for utils on developing
+	implementation "org.apache.commons:commons-lang3:${lang3Version}"
+	implementation "org.apache.commons:commons-collections4:${collections4Version}"
+	
+	// Cipher libraries provider
+	implementation "org.bouncycastle:bcprov-jdk15on:${cipherVersion}"
+	implementation "com.google.crypto.tink:tink:${tinkVersion}"
+	
+	// Testing
+	testCompile "org.springframework.security:spring-security-test:5.1.6.RELEASE"
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	
+	// Loombok
+	compileOnly "org.projectlombok:lombok"
+	
+	annotationProcessor "org.projectlombok:lombok"
+}
+
+test {
+	useJUnitPlatform()
+}
