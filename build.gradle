@@ -72,7 +72,7 @@ dependencies {
 	implementation "com.google.crypto.tink:tink:${tinkVersion}"
 	
 	// Testing
-	testCompile "org.springframework.security:spring-security-test:5.1.6.RELEASE"
+	testImplementation "org.springframework.security:spring-security-test:5.1.6.RELEASE"
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
